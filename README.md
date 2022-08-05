@@ -13,6 +13,8 @@ can be used with hidecursor to also hide arrow.<br>
 see release folder has hidden.cur and display.bat which can be run at system startup.<br>
 taskbar autohide doesnt always do the trick, if you want your screens black..<br>
 
+NOTE:release executables are 64bit.
+
 
 peace
 
