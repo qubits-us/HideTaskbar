@@ -1,4 +1,4 @@
-program HideTaskb;
+program HideCursor;
 
 {$APPTYPE CONSOLE}
 
@@ -6,12 +6,6 @@ program HideTaskb;
 
 uses
   System.SysUtils,Winapi.Windows,System.Win.Registry,System.IOUtils,ShellApi;
-
-
-function RunAsAdmin(const Handle: Hwnd; const Path, Params: string): integer;
-begin
-  Result:=ShellExecute(Handle, 'runas', PChar(Path),PChar(Params), nil, SW_SHOWNORMAL);
-end;
 
 
 
@@ -24,7 +18,7 @@ begin
   try
 
   aPath:=ExtractFilePath(ParamStr(0));
-   if TFile.Exists(aPath+'HideCursor.exe') then
+   if TFile.Exists(aPath+'Hidden.cur') then
      KillCurr:=true else KillCurr:=false;
 
 
@@ -37,35 +31,37 @@ begin
      end;
 
 
+
+
    if Hiding then
      begin
-    ShowWindow(FindWindow('Shell_TrayWnd', nil), SW_HIDE);
      if KillCurr then
       begin
-       reg:=tRegistry.Create(KEY_READ);
+       reg:=tRegistry.Create(KEY_ALL_ACCESS);
        if reg.OpenKey('Control Panel\Cursors\',false) then
          begin
            aCurr:=reg.ReadString('Arrow');
            if POS('HIDDEN',UpperCase(aCurr))<1 then
              begin
-               RunAsAdmin(0,aPath+'HideCursor.exe','');
+               reg.WriteString('Arrow',aPath+'Hidden.cur');
+
              end;
-         end;
            reg.CloseKey;
            reg.Free;
+         end;
       end;
     end else
       begin
-      ShowWindow(FindWindow('Shell_TrayWnd', nil), SW_SHOW);
      if KillCurr then
       begin
-       reg:=tRegistry.Create(KEY_READ);
+       reg:=tRegistry.Create(KEY_ALL_ACCESS);
        if reg.OpenKey('Control Panel\Cursors\',false) then
          begin
            aCurr:=reg.ReadString('Arrow');
            if POS('HIDDEN',UpperCase(aCurr))>0 then
              begin
-               RunAsAdmin(0,aPath+'HideCursor.exe','/show');
+               //set back to default
+               reg.WriteString('Arrow','C:\WINDOWS\cursors\aero_arrow.cur');
              end;
            reg.CloseKey;
            reg.Free;
